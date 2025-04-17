@@ -1,60 +1,34 @@
 package ra.edu.business.model.course;
 
+import java.sql.Date;
+
 public class Course {
-    private int courseId;
-    private String courseCode;
-    private String courseName;
-    private String Description;
-    private int durationWeek;
+    private int id;
+    private String name;
+    private int duration;
+    private String instructor;
 
-    public Course() {
+    public Course(String name, int duration, String instructor) {
+        this.name = name;
+        this.duration = duration;
+        this.instructor = instructor;
     }
 
-    public Course(int courseId, String courseCode, String courseName, String description, int durationWeek) {
-        this.courseId = courseId;
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-        Description = description;
-        this.durationWeek = durationWeek;
+    public Course(int id, String name, int duration, String instructor) {
+        this.id = id;
+        this.name = name;
+        this.duration = duration;
+        this.instructor = instructor;
     }
 
-    public int getCourseId() {
-        return courseId;
-    }
+    // Getters & Setters
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public int getDuration() { return duration; }
+    public String getInstructor() { return instructor; }
 
-    public String getCourseCode() {
-        return courseCode;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public int getDurationWeek() {
-        return durationWeek;
-    }
-
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public void setDescription(String description) {
-        Description = description;
-    }
-
-    public void setDurationWeek(int durationWeek) {
-        this.durationWeek = durationWeek;
-    }
+    public void setId(int id) { this.id = id; }
+    public void setName(String name) { this.name = name; }
+    public void setDuration(int duration) { this.duration = duration; }
+    public void setInstructor(String instructor) { this.instructor = instructor; }
 }

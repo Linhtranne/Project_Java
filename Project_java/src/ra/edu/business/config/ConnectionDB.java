@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionDB {
-    private static final String URL = "jdbc:mysql://localhost:3306/company";
+    private static final String URL = "jdbc:mysql://localhost:3306/course_management";
     private static final String USER_NAME = "linhtranne";
     private static final String PASSWORD = "123456";
 
