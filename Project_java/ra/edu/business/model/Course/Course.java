@@ -14,6 +14,7 @@ public class Course {
     private String instructor;
     private Std_status status;
     private LocalDate create_at;
+    private String StudentStatus;
 
     public Course() {
         status = Std_status.ACTIVE;
@@ -75,6 +76,14 @@ public class Course {
 
     public void setStatus(Std_status status) {
         this.status = status;
+    }
+
+    public String getStudentStatus() {
+        return StudentStatus;
+    }
+
+    public void setStudentStatus(String StudentStatus) {
+        this.StudentStatus = StudentStatus;
     }
 
     public void inputData(Scanner scanner){

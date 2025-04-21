@@ -3,5 +3,6 @@ import ra.edu.business.model.Account.Account;
 
 public interface AccountService {
     Account login(String username, String password);
+    boolean updatePassword(int accountId, String newPassword);
 
 }
