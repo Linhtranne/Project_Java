@@ -8,7 +8,6 @@ CREATE TABLE Account (
                          role ENUM('ADMIN', 'STUDENT') NOT NULL,
                          status ENUM('ACTIVE','INACTIVE','BLOCKED')
 );
-
 CREATE TABLE Students (
                           id_account INT NOT NULL PRIMARY KEY,
                           name VARCHAR(100) NOT NULL,
@@ -36,7 +35,6 @@ CREATE TABLE enrollments (
                              FOREIGN KEY(student_id) REFERENCES Students(id_account),
                              FOREIGN KEY(course_id) REFERENCES Courses(id)
 );
-
 INSERT INTO Account (email, password, role, status)
 VALUES
     ('admin@example.com', 'admin123', 'ADMIN', 'ACTIVE'),
@@ -50,17 +48,16 @@ VALUES
     ('student8@example.com', 'student234', 'STUDENT', 'ACTIVE'),
     ('student9@example.com', 'student567', 'STUDENT', 'INACTIVE');
 
+
 INSERT INTO Students (id_account, name, dob, sex, phone, create_at) VALUES
-    (1, 'Nguyễn Văn An', '2000-01-15', 1, '0912345678', NOW()),
-    (2, 'Trần Thị Bình', '1999-03-22', 0, '0987654321', NOW()),
-    (3, 'Lê Hoàng Cường', '2001-07-10', 1, '0901234567', NOW()),
-    (4, 'Phạm Minh Duyên', '2002-11-05', 0, NULL, NOW()),
-    (5, 'Hoàng Văn Em', '1998-09-18', 1, '0934567890', NOW()),
-    (6, 'Ngô Thị Hồng', '2000-04-30', 0, '0971234567', NOW()),
-    (7, 'Đặng Văn Khang', '1997-12-25', 1, '0945678901', NOW()),
-    (8, 'Vũ Thị Lan', '2003-02-14', 0, NULL, NOW()),
-    (9, 'Bùi Văn Minh', '1999-06-08', 1, '0967890123', NOW()),
-    (10, 'Đỗ Thị Ngọc', '2001-08-20', 0, '0923456789', NOW());
+                                                                        (1, 'Nguyễn Văn An', '2000-01-15', 1, '0912345678', NOW()),
+                                                                        (2, 'Trần Thị Bình', '1999-03-22', 0, '0987654321', NOW()),
+                                                                        (3, 'Lê Hoàng Cường', '2001-07-10', 1, '0901234567', NOW()),
+                                                                        (4, 'Phạm Minh Duyên', '2002-11-05', 0, NULL, NOW()),
+                                                                        (5, 'Hoàng Văn Em', '1998-09-18', 1, '0934567890', NOW()),
+                                                                        (6, 'Ngô Thị Hồng', '2000-04-30', 0, '0971234567', NOW()),
+                                                                        (7, 'Đặng Văn Khang', '1997-12-25', 1, '0945678901', NOW()),
+                                                                        (9, 'Bùi Văn Minh', '1999-06-08', 1, '0967890123', NOW());
 INSERT INTO Courses (name, duration, instructor, status)
 VALUES
     ('Java Programming', 30, 'John Doe', 'ACTIVE'),
@@ -73,6 +70,12 @@ VALUES
     ('Mobile App Development', 60, 'David Garcia', 'ACTIVE'),
     ('Game Development', 55, 'Emma Anderson', 'INACTIVE'),
     ('Artificial Intelligence', 70, 'Olivia Thomas', 'ACTIVE');
+INSERT INTO enrollments (student_id, course_id, status)
+VALUES
+    (2, 1, 'WAITING'),
+    (3, 1, 'WAITING'),
+    (2, 2, 'CONFIRM'),
+    (3, 2, 'WAITING');
 
 DELIMITER //
 CREATE PROCEDURE login_by_account(
@@ -170,16 +173,11 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE find_course_by_name(
-    p_name VARCHAR(100),
-    p_limit INT,
-    p_page INT
+    p_name VARCHAR(100)
 )
 BEGIN
-    DECLARE offset_in INT;
-    SET offset_in = (p_page - 1) * p_limit;
 SELECT * FROM Courses
-WHERE status != 'BLOCKED' AND name LIKE CONCAT('%', p_name, '%')
-    LIMIT p_limit OFFSET offset_in;
+WHERE status != 'BLOCKED' AND name LIKE CONCAT('%', p_name, '%');
 END //
 DELIMITER ;
 
@@ -323,10 +321,23 @@ DELETE FROM Students WHERE id_account = p_id_account;
 END //
 DELIMITER ;
 
+-- Cập nhật mật khẩu
 DELIMITER //
-CREATE PROCEDURE update_account_password(IN p_account_id INT, IN p_new_password VARCHAR(255))
+CREATE PROCEDURE update_account_password(IN p_account_id INT, IN p_email VARCHAR(100), IN p_new_password VARCHAR(255))
 BEGIN
-UPDATE Account SET password = p_new_password WHERE id = p_account_id;
+    IF EXISTS (
+        SELECT 1
+        FROM Account
+        WHERE id = p_account_id AND email = p_email AND status = 'ACTIVE'
+    ) THEN
+UPDATE Account
+SET password = p_new_password
+WHERE id = p_account_id;
+SELECT 'Cập nhật mật khẩu thành công!' AS message;
+ELSE
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Email không khớp hoặc tài khoản không hoạt động!';
+END IF;
 END //
 DELIMITER ;
 
@@ -334,8 +345,18 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE register_course(IN p_student_id INT, IN p_course_id INT)
 BEGIN
-INSERT INTO enrollments (student_id, course_id, registered_at, status)
-VALUES (p_student_id, p_course_id, CURRENT_TIMESTAMP(), 'WAITING');
+    DECLARE existing_count INT;
+SELECT COUNT(*) INTO existing_count
+FROM enrollments
+WHERE student_id = p_student_id AND course_id = p_course_id;
+IF existing_count = 0 THEN
+        INSERT INTO enrollments (student_id, course_id, registered_at, status)
+        VALUES (p_student_id, p_course_id, CURRENT_TIMESTAMP(), 'WAITING');
+SELECT 'Đăng ký khóa học thành công!' AS message;
+ELSE
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Sinh viên đã đăng ký khóa học này!';
+END IF;
 END //
 DELIMITER ;
 
@@ -345,7 +366,7 @@ CREATE PROCEDURE unregister_course(IN p_student_id INT, IN p_course_id INT)
 BEGIN
 UPDATE enrollments
 SET status = 'CANCEL'
-WHERE student_id = p_student_id AND course_id = p_course_id AND status IN ('WAITING', 'CONFIRM');
+WHERE student_id = p_student_id AND course_id = p_course_id AND status IN ('WAITING');
 END //
 DELIMITER ;
 
@@ -372,4 +393,85 @@ FROM enrollments
 WHERE student_id = p_student_id AND status IN ('WAITING', 'CONFIRM');
 END //
 DELIMITER ;
+-- Hiển thị danh sách sinh viên đăng ký theo khóa học (phân trang)
+DELIMITER //
+CREATE PROCEDURE get_students_by_course(IN p_course_id INT, IN p_limit INT, IN p_page INT)
+BEGIN
+    DECLARE v_offset INT;
+    SET v_offset = (p_page - 1) * p_limit;
+SELECT e.id, e.student_id, a.email, e.status, e.registered_at
+FROM enrollments e
+         JOIN Account a ON e.student_id = a.id
+WHERE e.course_id = p_course_id AND e.status IN ('WAITING', 'CONFIRM')
+    LIMIT p_limit OFFSET v_offset;
+END //
+DELIMITER ;
+-- Đếm số sinh viên đăng ký theo khóa học
+DELIMITER //
+CREATE PROCEDURE count_students_by_course(IN p_course_id INT)
+BEGIN
+SELECT COUNT(*) AS total
+FROM enrollments
+WHERE course_id = p_course_id AND status IN ('WAITING', 'CONFIRM');
+END //
+DELIMITER ;
 
+-- Duyệt đăng ký khóa học
+DELIMITER //
+CREATE PROCEDURE approve_enrollment(IN p_student_id INT, IN p_course_id INT)
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM enrollments
+        WHERE student_id = p_student_id AND course_id = p_course_id AND status = 'WAITING'
+    ) THEN
+UPDATE enrollments
+SET status = 'CONFIRM'
+WHERE student_id = p_student_id AND course_id = p_course_id;
+SELECT 'Duyệt đăng ký thành công!' AS message;
+ELSE
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Không tìm thấy đăng ký hoặc đăng ký không ở trạng thái WAITING!';
+END IF;
+END //
+DELIMITER ;
+
+-- Xóa đăng ký khóa học
+DELIMITER //
+CREATE PROCEDURE delete_enrollment(IN p_student_id INT, IN p_course_id INT)
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM enrollments
+        WHERE student_id = p_student_id AND course_id = p_course_id AND status IN ('WAITING', 'CONFIRM')
+    ) THEN
+UPDATE enrollments
+SET status = 'DENIED'
+WHERE student_id = p_student_id AND course_id = p_course_id;
+SELECT 'Xóa đăng ký thành công!' AS message;
+ELSE
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Không tìm thấy đăng ký hoặc đăng ký đã bị hủy!';
+END IF;
+END //
+DELIMITER ;
+
+-- Lấy danh sách khóa học
+DELIMITER //
+CREATE PROCEDURE get_all_courses()
+BEGIN
+SELECT id, name, duration, instructor, status, create_at
+FROM Courses
+WHERE status = 'ACTIVE';
+END //
+DELIMITER ;
+
+-- Lấy tài khoản theo ID
+DELIMITER //
+CREATE PROCEDURE get_account_by_id(IN p_id INT)
+BEGIN
+SELECT id, email, role, status
+FROM Account
+WHERE id = p_id;
+END //
+DELIMITER ;
