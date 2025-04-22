@@ -62,7 +62,7 @@ public class StudentServiceImp implements StudentService {
                     if (pagination.getCurrentpage() >= 3) System.out.print("... ");
                     System.out.print(pagination.getCurrentpage() - 1);
                 }
-                System.out.print("\u001B[33m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
+                System.out.print("\u001B[35m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
                 if (pagination.getCurrentpage() < pagination.getTotalpages()) {
                     System.out.print(" " + (pagination.getCurrentpage() + 1));
                     if (pagination.getTotalpages() - pagination.getCurrentpage() >= 2) System.out.print(" ...");

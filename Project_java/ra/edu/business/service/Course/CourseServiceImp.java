@@ -47,19 +47,19 @@ public class CourseServiceImp implements CourseService {
             }
 
             if (!listPagination.isEmpty()) {
-                System.out.printf("%-10s | %-25s | %-15s | %-25s | %-15s\n",
-                        "Mã KH", "Tên khóa học", "Thời lượng (giờ)", "Giảng viên phụ trách", "Ngày thêm");
+                System.out.printf("%-10s | %-25s | %-15s | %-25s | %-15s| %-15s|\n",
+                        "Mã KH", "Tên khóa học", "Thời lượng (giờ)", "Giảng viên phụ trách", "Ngày thêm", "Trạng thái");
                 listPagination.forEach(course -> {
-                    System.out.printf("%-10d | %-25s | %-15d | %-25s | %-15s\n",
+                    System.out.printf("%-10d | %-25s | %-15d | %-25s | %-15s| %-15s|\n",
                             course.getId(), course.getName(), course.getDuration(),
-                            course.getInstructor(), course.getCreate_at());
+                            course.getInstructor(), course.getCreate_at(), course.getStatus());
                 });
                 System.out.print("Trang: ");
                 if (pagination.getCurrentpage() > 1) {
                     if (pagination.getCurrentpage() >= 3) System.out.print("... ");
                     System.out.print(pagination.getCurrentpage() - 1);
                 }
-                System.out.print("\u001B[33m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
+                System.out.print("\u001B[35m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
                 if (pagination.getCurrentpage() < pagination.getTotalpages()) {
                     System.out.print(" " + (pagination.getCurrentpage() + 1));
                     if (pagination.getTotalpages() - pagination.getCurrentpage() >= 2) System.out.print(" ...");

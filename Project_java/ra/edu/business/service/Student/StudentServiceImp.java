@@ -38,10 +38,6 @@ public class StudentServiceImp implements StudentService {
             System.out.println("Không tìm thấy khóa học với ID: " + courseId);
             return;
         }
-//        if (!course.getStatus().equals("INACTIVE")) {
-//            System.out.println("Khóa học không ở trạng thái mở để đăng ký!");
-//            return;
-//        }
         if (StudentDAO.registerCourse(studentId, courseId)) {
             System.out.println("Đăng ký khóa học thành công! Trạng thái: WAITING");
         } else {
@@ -79,19 +75,19 @@ public class StudentServiceImp implements StudentService {
                 System.out.println("Bạn chưa đăng ký khóa học nào hoặc không có khóa học ở trạng thái WAITING/CONFIRM.");
                 break;
             }
-            System.out.printf("%-10s | %-25s | %-15s | %-15s |\n",
-                    "ID", "Tên khóa học", "Trạng thái khóa học", "Trạng thái đăng ký");
+            System.out.printf("%-10s | %-25s | %-15s |\n",
+                    "ID", "Tên khóa học", "Trạng thái khóa học");
             courses.forEach(course -> {
-                System.out.printf("%-10d | %-25s | %-15s | %-15s |\n",
+                System.out.printf("%-10d | %-25s | %-15s |\n",
                         course.getId(), course.getName()
-                        , course.getStatus(), course.getStudentStatus());
+                        , course.getStatus());
             });
             System.out.print("Trang: ");
             if (pagination.getCurrentpage() > 1) {
                 if (pagination.getCurrentpage() >= 3) System.out.print("... ");
                 System.out.print(pagination.getCurrentpage() - 1);
             }
-            System.out.print("\u001B[33m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
+            System.out.print("\u001B[35m" + "    " + pagination.getCurrentpage() + "     " + "\u001B[0m");
             if (pagination.getCurrentpage() < pagination.getTotalpages()) {
                 System.out.print(" " + (pagination.getCurrentpage() + 1));
                 if (pagination.getTotalpages() - pagination.getCurrentpage() >= 2) System.out.print(" ...");

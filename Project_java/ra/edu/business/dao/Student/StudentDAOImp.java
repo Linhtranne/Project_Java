@@ -25,7 +25,11 @@ public class StudentDAOImp implements StudentDAO {
             callSt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println("Có lỗi khi đăng ký khóa học: " + e.getMessage());
+            if (e.getSQLState().equals("45000")) {
+                System.out.println(e.getMessage());
+            } else {
+                System.out.println("Có lỗi khi đăng ký khóa học: " + e.getMessage());
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);

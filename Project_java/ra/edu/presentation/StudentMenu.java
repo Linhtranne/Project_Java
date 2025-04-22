@@ -43,7 +43,7 @@ public class StudentMenu {
                     unregisterCourse();
                     break;
                 case 5:
-                    changePassword();
+//                    updatePassword();
                     break;
                 case 6:
                     exit = true;
@@ -98,28 +98,28 @@ public class StudentMenu {
         StudentService.unregisterCourse(scanner, currentAccount.getId());
     }
 
-    private static void changePassword() {
-        Account currentAccount = Main.currentAccount;
-        if (currentAccount == null) {
-            System.out.println("Bạn cần đăng nhập để đổi mật khẩu!");
-            return;
-        }
-        System.out.print("Nhập mật khẩu mới (tối thiểu 6 ký tự): ");
-        String newPassword = scanner.nextLine().trim();
-        if (newPassword.length() < 6) {
-            System.out.println("Mật khẩu mới phải có ít nhất 6 ký tự!");
-            return;
-        }
-        System.out.print("Xác nhận mật khẩu mới: ");
-        String confirmPassword = scanner.nextLine().trim();
-        if (!newPassword.equals(confirmPassword)) {
-            System.out.println("Mật khẩu xác nhận không khớp!");
-            return;
-        }
-        if (accountService.updatePassword(currentAccount.getId(), newPassword)) {
-            System.out.println("Đổi mật khẩu thành công!");
-        } else {
-            System.out.println("Đổi mật khẩu thất bại. Vui lòng thử lại!");
-        }
-    }
+//    private static void updatePassword() {
+//        Account currentAccount = Main.currentAccount;
+//        if (currentAccount == null) {
+//            System.out.println("Bạn cần đăng nhập để đổi mật khẩu!");
+//            return;
+//        }
+//        System.out.print("Nhập mật khẩu mới (tối thiểu 6 ký tự): ");
+//        String newPassword = scanner.nextLine().trim();
+//        if (newPassword.length() < 6) {
+//            System.out.println("Mật khẩu mới phải có ít nhất 6 ký tự!");
+//            return;
+//        }
+//        System.out.print("Xác nhận mật khẩu mới: ");
+//        String confirmPassword = scanner.nextLine().trim();
+//        if (!newPassword.equals(confirmPassword)) {
+//            System.out.println("Mật khẩu xác nhận không khớp!");
+//            return;
+//        }
+//        if (accountService.updatePassword(scanner, Main.currentAccount.getId())) {
+//            System.out.println("Đổi mật khẩu thành công!");
+//        } else {
+//            System.out.println("Đổi mật khẩu thất bại. Vui lòng thử lại!");
+//        }
+//    }
 }

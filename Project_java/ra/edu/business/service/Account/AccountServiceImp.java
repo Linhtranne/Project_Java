@@ -1,9 +1,11 @@
 package ra.edu.business.service.Account;
 
-import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.dao.Account.AccountDAOImp;
 import ra.edu.business.model.Account.Account;
-import java.sql.*;
+import ra.edu.validate.Validator;
+import ra.edu.business.dao.Account.AccountDAO;
+import java.util.Scanner;
+
 public class AccountServiceImp implements AccountService {
     public AccountDAOImp accountDAOImp;
     public AccountServiceImp() {
@@ -15,23 +17,19 @@ public class AccountServiceImp implements AccountService {
         return accountDAOImp.login(username, password);
     }
 
-    @Override
-    public boolean updatePassword(int accountId, String newPassword) {
-        Connection conn = null;
-        CallableStatement callSt = null;
-        try {
-            conn = ConnectionDB.openConnection();
-            callSt = conn.prepareCall("{call update_account_password(?,?)}");
-            callSt.setInt(1, accountId);
-            callSt.setString(2, newPassword);
-            callSt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Có lỗi khi cập nhật mật khẩu: " + e.getMessage());
-            return false;
-        } finally {
-            ConnectionDB.closeConnection(conn, callSt);
-        }
-    }
-
+//    @Override
+//    public boolean updatePassword(Scanner scanner, int accountId) {
+//        System.out.print("Nhập email của bạn: ");
+//        String email = scanner.nextLine().trim();
+//        System.out.print("Nhập mật khẩu mới: ");
+//        String newPassword = Validator.validateString(scanner, 6, 255, "Mật khẩu mới: ", "Mật khẩu");
+//
+//        if (AccountDAO.updatePassword(accountId, email, newPassword)) {
+//            System.out.println("Cập nhật mật khẩu thành công!");
+//        } else {
+//            System.out.println("Cập nhật mật khẩu thất bại. Vui lòng kiểm tra email hoặc thử lại.");
+//        }
+//        return false;
+//    }
 }
+

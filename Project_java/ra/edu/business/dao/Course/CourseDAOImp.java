@@ -8,6 +8,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -297,5 +298,32 @@ public class CourseDAOImp implements CourseDAO {
             ConnectionDB.closeConnection(conn, callSt);
         }
         return false;
+    }
+
+    @Override
+    public List<Course> getAllCourses() {
+        List<Course> courses = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{call get_all_courses()}");
+            ResultSet rs = callSt.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setId(rs.getInt("id"));
+                c.setName(rs.getString("name"));
+                c.setDuration(rs.getInt("duration"));
+                c.setInstructor(rs.getString("instructor"));
+                c.setStatus(Std_status.valueOf(rs.getString("status")));
+                c.setCreate_at(LocalDate.from(rs.getTimestamp("create_at").toLocalDateTime()));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy danh sách khóa học: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return courses;
     }
 }

@@ -51,16 +51,16 @@ VALUES
     ('student9@example.com', 'student567', 'STUDENT', 'INACTIVE');
 
 INSERT INTO Students (id_account, name, dob, sex, phone, create_at) VALUES
-                                                                        (1, 'Nguyễn Văn An', '2000-01-15', 1, '0912345678', NOW()),
-                                                                        (2, 'Trần Thị Bình', '1999-03-22', 0, '0987654321', NOW()),
-                                                                        (3, 'Lê Hoàng Cường', '2001-07-10', 1, '0901234567', NOW()),
-                                                                        (4, 'Phạm Minh Duyên', '2002-11-05', 0, NULL, NOW()),
-                                                                        (5, 'Hoàng Văn Em', '1998-09-18', 1, '0934567890', NOW()),
-                                                                        (6, 'Ngô Thị Hồng', '2000-04-30', 0, '0971234567', NOW()),
-                                                                        (7, 'Đặng Văn Khang', '1997-12-25', 1, '0945678901', NOW()),
-                                                                        (8, 'Vũ Thị Lan', '2003-02-14', 0, NULL, NOW()),
-                                                                        (9, 'Bùi Văn Minh', '1999-06-08', 1, '0967890123', NOW()),
-                                                                        (10, 'Đỗ Thị Ngọc', '2001-08-20', 0, '0923456789', NOW());
+    (1, 'Nguyễn Văn An', '2000-01-15', 1, '0912345678', NOW()),
+    (2, 'Trần Thị Bình', '1999-03-22', 0, '0987654321', NOW()),
+    (3, 'Lê Hoàng Cường', '2001-07-10', 1, '0901234567', NOW()),
+    (4, 'Phạm Minh Duyên', '2002-11-05', 0, NULL, NOW()),
+    (5, 'Hoàng Văn Em', '1998-09-18', 1, '0934567890', NOW()),
+    (6, 'Ngô Thị Hồng', '2000-04-30', 0, '0971234567', NOW()),
+    (7, 'Đặng Văn Khang', '1997-12-25', 1, '0945678901', NOW()),
+    (8, 'Vũ Thị Lan', '2003-02-14', 0, NULL, NOW()),
+    (9, 'Bùi Văn Minh', '1999-06-08', 1, '0967890123', NOW()),
+    (10, 'Đỗ Thị Ngọc', '2001-08-20', 0, '0923456789', NOW());
 INSERT INTO Courses (name, duration, instructor, status)
 VALUES
     ('Java Programming', 30, 'John Doe', 'ACTIVE'),
